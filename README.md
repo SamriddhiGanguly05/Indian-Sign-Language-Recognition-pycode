@@ -12,116 +12,222 @@
 
 ## 👥 Team Members
 
-*   **Harsh Yadav** (Team Lead)
-*   Avishkar Jaiswal
-*   Samriddhi Ganguly
-*   Samyak Jain
-*   Harshit Singh
-*   Thakur Akshayakumar Raj
+* **Harsh Yadav** (Team Lead)
+* Avishkar Jaiswal
+* Samriddhi Ganguly
+* Samyak Jain
+* Harshit Singh
+* Thakur Akshayakumar Raj
 
 ---
 
 ## 🚀 Project Overview
 
-**SPARC** is a specialized **Indian Sign Language (ISL) Recognition System**. It is designed to interpret the complex, dynamic, and bimanual gestures unique to ISL, translating them into text/speech in real-time.
+**SPARC** is a specialized **Indian Sign Language (ISL) Recognition System** designed to interpret complex and dynamic ISL gestures in real-time using **Computer Vision** and **Deep Learning**.
 
-Unlike generic sign language models, SPARC focuses specifically on the **temporal dynamics** of ISL—where the *movement* is just as important as the *pose*.
+Unlike traditional sign language recognition systems focused only on static alphabets, SPARC captures the **temporal dynamics of gestures**, enabling recognition of complete words and sentence-level motion patterns.
 
 ### ❓ Why This Matters
-*   **5 Million+** deaf individuals in India.
-*   **< 250** certified ISL interpreters.
-*   **The Gap:** Most existing solutions focus on static alphabets (A-Z). ISL is a full language with grammar and continuous motion. **SPARC solves for words and sentences.**
+
+* **5 Million+** deaf individuals in India.
+* **< 250** certified ISL interpreters.
+* Existing solutions mainly focus on **static alphabet classification**.
+* **SPARC solves real-time dynamic word and sentence recognition**.
+
+---
+
+# 🏗️ SPARC Architecture
+
+<p align="center">
+  <img src="SPARC architecture.png" alt="SPARC Architecture Diagram" width="100%">
+</p>
 
 ---
 
 ## 🧠 Advanced ISL Model Architecture
 
-This repository implements a multi-stage deep learning pipeline, evolving from standard LSTMs to State-of-the-Art (SOTA) architectures.
+This repository implements a **multi-stage deep learning pipeline** evolving from standard LSTMs to advanced spatial-temporal architectures.
 
-### 1. Data Processing Pipeline (`helper_functions.py`)
-*   **Input normalization:** 45 Frames per video (Fixed Size).
-*   **Feature Extraction:** MediaPipe Holistic extracts **258 Keypoints** per frame:
-    *   **Pose (132):** Body orientation & arm movement.
-    *   **Left Hand (63) + Right Hand (63):** Fine-grained finger articulation.
-*   **Augmentation Strategy:** To ensure robustness, we implement:
-    *   Gaussian Noise Injection (Simulating sensor noise).
-    *   Spatial Scaling (Handling different body sizes).
-    *   Temporal Warping (Handling different signing speeds).
+---
 
-### 2. Model Evolution
-We researched and implemented three distinct tiers of models:
+### 1️⃣ Data Processing Pipeline (`helper_functions.py`)
+
+#### 🔹 Input Standardization
+* 45 Frames per video sequence
+* Fixed-length temporal input pipeline
+
+#### 🔹 Feature Extraction using MediaPipe Holistic
+Extracts **258 Keypoints per frame**
+
+| Feature Type | Keypoints |
+|---|---|
+| Pose Landmarks | 132 |
+| Left Hand Landmarks | 63 |
+| Right Hand Landmarks | 63 |
+
+#### 🔹 Data Augmentation
+To improve robustness:
+* Gaussian Noise Injection
+* Spatial Scaling
+* Temporal Warping
+
+---
+
+### 2️⃣ Model Evolution
+
+We implemented three tiers of deep learning architectures.
+
+---
 
 #### 🟢 Tier 1: Baseline LSTM (`deploy-code.py`)
-*   **Structure:** 3 stacked LSTM layers (64-128-256 units) + Dense classification head.
-*   **Use Case:** Fast, lightweight recognition for basic vocabulary.
-*   **Current Deployment:** Optimized for low-latency CPU inference.
+
+* 3 stacked LSTM layers
+* Hidden Units: 64 → 128 → 256
+* Lightweight low-latency inference
+* Optimized for CPU deployment
+
+---
 
 #### 🔵 Tier 2: Regularized Deep LSTM (`train-improved-model.py`)
-*   **Improvements:** Added Batch Normalization, Dropout (0.3), and L2 Regularization.
-*   **Activation:** Switched to `tanh` for stable gradient flow.
-*   **Result:** Higher accuracy on unseen test subjects.
+
+Enhancements:
+* Batch Normalization
+* Dropout (0.3)
+* L2 Regularization
+* `tanh` activation for stable gradients
+
+Result:
+* Better generalization on unseen users
+
+---
 
 #### 🔴 Tier 3: Ultra-Advanced Two-Stream Network (`train-ultra-advanced-model.py`)
-*   **SOTA Architecture:** A hybrid **Spatial-Temporal** design.
-*   **Stream 1 (Spatial):** LSTM with Self-Attention mechanisms to focus on hand-face interaction.
-*   **Stream 2 (Temporal):** Temporal Convolutional Networks (TCN) to capture fast motion dynamics.
-*   **Fusion:** Attention-based fusion layer combines both streams for the final prediction.
+
+Hybrid Spatial-Temporal architecture:
+
+### Stream 1 — Spatial Modeling
+* LSTM + Self-Attention
+* Captures hand-face interaction
+
+### Stream 2 — Temporal Modeling
+* Temporal Convolutional Networks (TCN)
+* Captures gesture motion dynamics
+
+### Fusion Layer
+* Attention-based stream fusion
+* Final gesture classification
 
 ---
 
-## ⚡ Real-Time Geometric Detector
-*For instant feedback on static cultural signs.*
+# ⚡ Real-Time Geometric Detection Engine
 
-Alongside the AI model, we engineered a **Rule-Based Heuristic Engine** (`realtime-detection.py`) for specific geometric ISL gestures:
-*   **Namaste:** Calculates wrist-to-wrist distance and palm symmetry.
-*   **I am Indian:** Triangulates Hand-Eyebrow-Shoulder positions.
-*   **Water/Doctor/Home:** Custom geometric signatures.
+For ultra-fast recognition of static cultural gestures.
 
----
+Implemented in:
+```python
+realtime-detection.py
+```
 
-## 📊 Dataset & Performance
+Supported gestures:
+* Namaste
+* I am Indian
+* Water
+* Doctor
+* Home
 
-*   **Dataset:** [INCLUDE 50](https://zenodo.org/record/4010759) + **Custom NAMO NIRVANA Dataset**.
-*   **Vocabulary:** 16 Classes (Hello, Thank you, Please, Good Morning, etc.).
-*   **Training Scale:** 1000+ Videos with 5x Augmentation.
-*   **Accuracy:**
-    *   Validation: **74.6%**
-    *   Real-Time Test: **84.0%**
-
----
-
-## 📥 Installation
-
-1.  **Clone the repository**
-2.  **Install Dependencies:**
-    ```bash
-    pip install -r requirements.txt
-    ```
+Detection uses:
+* Wrist symmetry
+* Hand orientation
+* Geometric landmark relationships
 
 ---
 
-## 🖥️ Usage Guide
+# 📊 Dataset & Performance
 
-### 1. Run the Main ISL Model (Recommended)
-This uses the LSTM network to recognize dynamic words ("Hello", "How are you").
+| Metric | Value |
+|---|---|
+| Dataset | INCLUDE 50 + Custom Dataset |
+| Vocabulary Size | 16 Classes |
+| Training Videos | 1000+ |
+| Data Augmentation | 5x |
+| Validation Accuracy | 74.6% |
+| Real-Time Accuracy | 84.0% |
+
+---
+
+# 📥 Installation
+
+## Clone Repository
+```bash
+git clone <repo-url>
+```
+
+## Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+# 🖥️ Usage Guide
+
+## ▶️ Run Main Dynamic ISL Recognition
 ```bash
 python deploy-code.py
 ```
 
-### 2. Run Geometric Detection Demo
-For checking specific static signs (Namaste, Indian, etc.).
+---
+
+## ▶️ Run Real-Time Geometric Detection
 ```bash
 python realtime-detection.py
 ```
-*(Or use `RUN-REALTIME-DEMO.bat` on Windows)*
 
-### 3. Train Your Own Model
-If you want to add new words to the ISL dictionary:
+Windows Shortcut:
 ```bash
-# Prepare data in 'training-data/' folder
+RUN-REALTIME-DEMO.bat
+```
+
+---
+
+## ▶️ Train Custom Model
+```bash
 python train-improved-model.py --epochs 100 --augment 5
 ```
 
 ---
 
-*Developed by Team NAMO NIRVANA for Smart India Hackathon 2025.*
+# 🛠️ Tech Stack
+
+* Python
+* TensorFlow / Keras
+* OpenCV
+* MediaPipe Holistic
+* NumPy
+* LSTM
+* Temporal CNN (TCN)
+* Raspberry Pi
+
+---
+
+# 🌍 Applications
+
+* Assistive Communication
+* Accessibility Technology
+* Human-Computer Interaction
+* Smart Wearables
+* Real-Time Gesture Interfaces
+
+---
+
+# 📌 Future Improvements
+
+* Sentence-level ISL Translation
+* Transformer-based Gesture Modeling
+* Edge AI Optimization
+* Mobile Deployment
+* Multilingual Speech Output
+
+---
+
+Developed by **Team NAMO NIRVANA**.
